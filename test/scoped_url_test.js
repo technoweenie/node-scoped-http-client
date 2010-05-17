@@ -13,47 +13,60 @@ assert.equal(1,           client.options.query.a)
 assert.deepEqual([2],     client.options.query.b)
 assert.deepEqual({d:3},   client.options.query.c)
 
-assert.equal('http://user:pass@foo.com:81/bar/baz?a=1&b%5B%5D=2&c%5Bd%5D=3', client.url())
-
 delete client.options.query.b
 delete client.options.query.c
-client.hash('boom').auth('user', 'monkey').protocol('https')
-assert.equal('https://user:monkey@foo.com:81/bar/baz?a=1#boom', client.url())
+client.auth('user', 'monkey').protocol('https')
+assert.equal('user:monkey', client.options.auth)
+assert.equal('https',       client.options.protocol)
+assert.deepEqual({a:1},     client.options.query)
 
 client.path('qux').auth('user:pw').port(82).hash()
-assert.equal('https://user:pw@foo.com:82/bar/baz/qux?a=1', client.url())
+assert.equal('/bar/baz/qux', client.options.pathname)
+assert.equal('user:pw',      client.options.auth)
+assert.equal(82,             client.options.port)
 
 client.query('a').host('bar.com').port(443).query('b', 2).query({c: 3}).path('/boom')
-assert.equal('https://user:pw@bar.com/boom?b=2&c=3', client.url())
+assert.equal('bar.com',      client.options.hostname)
+assert.equal(443,            client.options.port)
+assert.deepEqual({b:2, c:3}, client.options.query)
 
 client.auth().host('foo.com').query('b').query('c')
-assert.equal('https://foo.com/boom', client.url())
+assert.equal(null,      client.options.auth)
+assert.equal('foo.com', client.options.hostname)
+assert.deepEqual({},    client.options.query)
 
 client.scope('api', function(scope) {
   called = true
-  assert.equal('https://foo.com/boom/api', scope.url())
+  assert.equal('/boom/api', scope.options.pathname)
 })
-assert.equal('https://foo.com/boom', client.url())
 assert.ok(called)
 
 called = false
 client.scope('http://', function(scope) {
   called = true
-  assert.equal('http://foo.com/boom', scope.url())
+  assert.equal('http:',   scope.options.protocol)
+  assert.equal('foo.com', scope.options.hostname)
+  assert.equal('/boom',   scope.options.pathname)
 })
 assert.ok(called)
 
 called = false
 client.scope('https://bar.com', function(scope) {
   called = true
-  assert.equal('https://bar.com/boom', scope.url())
+  assert.equal('https:',  scope.options.protocol)
+  assert.equal('bar.com', scope.options.hostname)
+  assert.equal('/boom',   scope.options.pathname)
 })
 assert.ok(called)
 
 called = false
 client.scope('/help', {protocol: 'http:'}, function(scope) {
   called = true
-  assert.equal('http://foo.com/help', scope.url())
+  assert.equal('http:',   scope.options.protocol)
+  assert.equal('foo.com', scope.options.hostname)
+  assert.equal('/help',   scope.options.pathname)
 })
 assert.ok(called)
-assert.equal('https://foo.com/boom', client.url())
+assert.equal('https',   client.options.protocol)
+assert.equal('foo.com', client.options.hostname)
+assert.equal('/boom',   client.options.pathname)
