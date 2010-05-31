@@ -12,7 +12,8 @@ var server = http.createServer(function(req, res) {
 server.listen(9999)
 
 server.addListener('listening', function() {
-  client = ScopedClient.create('http://localhost:9999', {headers: {accept: 'text/plain'}})
+  client = ScopedClient.create('http://localhost:9999', 
+    {headers: {accept: 'text/plain'}})
   client.get()(function(err, resp, body) {
     called++
     assert.equal(200,          resp.statusCode)

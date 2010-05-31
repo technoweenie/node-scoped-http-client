@@ -20,7 +20,7 @@ assert.equal('user:monkey', client.options.auth)
 assert.equal('https',       client.options.protocol)
 assert.deepEqual({a:1},     client.options.query)
 
-client.path('qux').auth('user:pw').port(82).hash()
+client.path('qux').auth('user:pw').port(82)
 assert.equal('/bar/baz/qux', client.options.pathname)
 assert.equal('user:pw',      client.options.auth)
 assert.equal(82,             client.options.port)

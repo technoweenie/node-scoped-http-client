@@ -24,6 +24,7 @@ var server = http.createServer(function(req, res) {
   })
 })
 server.listen(9999)
+
 server.addListener('listening', function() {
   client = ScopedClient.create('http://localhost:9999')
     .headers({'user-agent':'bob'})
@@ -37,9 +38,8 @@ server.addListener('listening', function() {
       assert.equal('PUT', curr)
       assert.equal('fred', ua)
       assert.equal("PUT hello: yea fred", body)
-      client.userAgent('jim').head()(function(err, resp, body) {
+      client.head()(function(err, resp, body) {
         called++
-        assert.equal('jim', ua)
         assert.equal('HEAD', curr)
         server.close()
       })
