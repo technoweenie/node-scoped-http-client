@@ -20,15 +20,15 @@ var server = http.createServer(function(req, res) {
 server.listen(9999)
 
 client = ScopedClient.create('http://localhost:9999')
-client.del()(function(resp, body) {
+client.del()(function(err, resp, body) {
   called++
   assert.equal('DELETE', curr)
   assert.equal("DELETE hello: ", body)
-  client.put('yea')(function(resp, body) {
+  client.put('yea')(function(err, resp, body) {
     called++
     assert.equal('PUT', curr)
     assert.equal("PUT hello: yea", body)
-    client.head()(function(resp, body) {
+    client.head()(function(err, resp, body) {
       called++
       assert.equal('HEAD', curr)
       server.close()

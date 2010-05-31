@@ -18,17 +18,17 @@ var server = http.createServer(function(req, res) {
 server.listen(9999)
 
 client = ScopedClient.create('http://localhost:9999')
-client.post(function(req) {
+client.post(function(err, req) {
   called++
   req.write('boo', 'ascii')
   req.write('ya',  'ascii')
-})(function(resp, body) {
+})(function(err, resp, body) {
   called++
   assert.equal(200,          resp.statusCode)
   assert.equal('text/plain', resp.headers['content-type'])
   assert.equal('POST hello: booya', body)
 
-  client.post(function(req) {
+  client.post(function(err, req) {
     req.addListener('response', function(resp) {
       resp.addListener('end', function() {
         // opportunity to stream response differently
