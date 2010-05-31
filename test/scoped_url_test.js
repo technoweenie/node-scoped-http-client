@@ -70,3 +70,9 @@ assert.ok(called)
 assert.equal('https',   client.options.protocol)
 assert.equal('foo.com', client.options.hostname)
 assert.equal('/boom',   client.options.pathname)
+
+assert.equal('/boom/ok', client.fullPath('ok'))
+assert.equal('/ok',      client.fullPath('/ok'))
+assert.equal('/boom',    client.options.pathname)
+client.options.pathname = null
+assert.equal('/ok',      client.fullPath('ok'))
