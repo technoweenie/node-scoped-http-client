@@ -12,26 +12,31 @@ var server = http.createServer(function(req, res) {
     body += chunk
   })
   req.addListener('end', function() {
-    curr = req.method
-    res.writeHead(200, {'Content-Type': 'text/plain'})
-    res.end((curr == 'HEAD') ? '' : (curr + ' hello: ' + body))
+    curr         = req.method
+    var respBody = curr + ' hello: ' + body
+    res.writeHead(200, {'content-type': 'text/plain', 
+      'content-length': respBody.length})
+    if(curr != 'HEAD')
+      res.write(respBody)
+    res.end()
   })
 })
 server.listen(9999)
-
-client = ScopedClient.create('http://localhost:9999')
-client.del()(function(err, resp, body) {
-  called++
-  assert.equal('DELETE', curr)
-  assert.equal("DELETE hello: ", body)
-  client.put('yea')(function(err, resp, body) {
+server.addListener('listening', function() {
+  client = ScopedClient.create('http://localhost:9999')
+  client.del()(function(err, resp, body) {
     called++
-    assert.equal('PUT', curr)
-    assert.equal("PUT hello: yea", body)
-    client.head()(function(err, resp, body) {
+    assert.equal('DELETE', curr)
+    assert.equal("DELETE hello: ", body)
+    client.put('yea')(function(err, resp, body) {
       called++
-      assert.equal('HEAD', curr)
-      server.close()
+      assert.equal('PUT', curr)
+      assert.equal("PUT hello: yea", body)
+      client.head()(function(err, resp, body) {
+        called++
+        assert.equal('HEAD', curr)
+        server.close()
+      })
     })
   })
 })
