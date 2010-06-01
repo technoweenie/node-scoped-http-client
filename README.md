@@ -25,7 +25,7 @@ I hate functions with lots of optional arguments.  Let's turn that into:
         sys.puts(body)
       })
 
-You can create scope a client to make requests with certain parameters without
+You can scope a client to make requests with certain parameters without
 affecting the main client instance:
 
     client.path('/api/v2/json') // reset path
