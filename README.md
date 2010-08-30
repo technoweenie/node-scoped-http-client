@@ -71,3 +71,9 @@ callback.
     })()
 
 [request]: http://nodejs.org/api.html#http-clientrequest-182
+
+## Development
+
+Run this in the main directory to compile coffeescript to javascript as you go:
+
+    coffee -wc -o lib --no-wrap src/**/*.coffee
