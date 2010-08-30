@@ -29,23 +29,16 @@ class ScopedClient
       callback null, req if callback
     catch err
       callback err, req if callback
-      err = e
 
     (callback) =>
       if callback
-        err = null
-        req.on 'response', (resp) ->
-          try
-            resp.setEncoding 'utf8'
-            body = ''
-            resp.on 'data', (chunk) ->
-              body += chunk
+        resp.setEncoding 'utf8'
+        body = ''
+        resp.on 'data', (chunk) ->
+          body += chunk
 
-            resp.on 'end', () ->
-              callback err, resp, body
-
-          catch e
-            err = e
+        resp.on 'end', () ->
+          callback null, resp, body
 
       req.end()
       @
