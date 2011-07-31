@@ -22,9 +22,14 @@ class ScopedClient
 
       port   = @options.port || 
                  ScopedClient.defaultPort[@options.protocol] || 80
-      client = http.createClient port, @options.hostname
-      req    = client.request method, @fullPath(), headers
-  
+
+      req = http.request
+        port:    port
+        host:    @options.hostname
+        method:  method
+        path:    @fullPath()
+        headers: headers
+
       req.write reqBody, 'utf-8' if sendingData
       callback null, req if callback
     catch err
