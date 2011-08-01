@@ -9,11 +9,11 @@ assert.equal '/bar/baz',  client.options.pathname
 assert.equal 81,          client.options.port
 assert.equal 'user:pass', client.options.auth
 assert.equal 1,           client.options.query.a
-assert.deepEqual [2],     client.options.query.b
-assert.deepEqual {d:3},   client.options.query.c
+assert.equal '2',         client.options.query['b[]']
+assert.equal '3',         client.options.query['c[d]']
 
-delete client.options.query.b
-delete client.options.query.c
+delete client.options.query['b[]']
+delete client.options.query['c[d]']
 client.auth('user', 'monkey').protocol('https')
 assert.equal 'user:monkey', client.options.auth
 assert.equal 'https',       client.options.protocol
@@ -52,7 +52,7 @@ client.scope 'https://bar.com', (scope) ->
   called = true
   assert.equal 'https:',  scope.options.protocol
   assert.equal 'bar.com', scope.options.hostname
-  assert.equal '/boom',   scope.options.pathname
+  assert.equal '/',       scope.options.pathname
 assert.ok called
 
 called = false
