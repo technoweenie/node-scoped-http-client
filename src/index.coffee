@@ -18,9 +18,9 @@ class ScopedClient
       sendingData  = method.match(/^P/) and reqBody and reqBody.length > 0
       headers.Host = @options.hostname
 
-      headers['Content-Length'] = reqBody.length if sendingData 
+      headers['Content-Length'] = reqBody.length if sendingData
 
-      port   = @options.port || 
+      port   = @options.port ||
                  ScopedClient.defaultPort[@options.protocol] || 80
       client = http.createClient port, @options.hostname
       req    = client.request method, @fullPath(), headers
