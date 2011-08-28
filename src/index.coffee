@@ -146,7 +146,7 @@ class ScopedClient
     options.headers ||= {}
     options
 
-ScopedClient.methods = ["GET", "POST", "PUT", "DELETE", "HEAD"]
+ScopedClient.methods = ["GET", "POST", "PATCH", "PUT", "DELETE", "HEAD"]
 ScopedClient.methods.forEach (method) ->
   ScopedClient.prototype[method.toLowerCase()] = (body, callback) ->
     @request method, body, callback
