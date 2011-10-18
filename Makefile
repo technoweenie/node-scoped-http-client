@@ -1,4 +1,4 @@
-test: coffee-dep
+test: coffee-dep js
 	@find test -name '*_test.coffee' | xargs -n 1 -t coffee
 
 dev: js
