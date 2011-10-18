@@ -10,8 +10,8 @@ server = http.createServer (req, res) ->
 server.listen 9999
 
 server.on 'listening', ->
-  client = ScopedClient.create 'http://localhost:9999', 
-    headers: 
+  client = ScopedClient.create 'http://localhost:9999',
+    headers:
       accept: 'text/plain'
 
   client.get() (err, resp, body) ->

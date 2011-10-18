@@ -14,7 +14,7 @@ server = http.createServer (req, res) ->
     curr     = req.method
     ua       = req.headers['user-agent']
     respBody = "#{curr} hello: #{body} #{ua}"
-    res.writeHead 200, 
+    res.writeHead 200,
       'content-type': 'text/plain',
       'content-length': respBody.length
 
