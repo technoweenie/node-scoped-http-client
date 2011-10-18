@@ -20,7 +20,7 @@ class ScopedClient
 
       headers['Content-Length'] = reqBody.length if sendingData
 
-      port   = @options.port ||
+      port = @options.port ||
         ScopedClient.defaultPort[@options.protocol] || 80
       req = http.request(
         port:    port
@@ -30,8 +30,9 @@ class ScopedClient
         headers: headers
         agent:   false
       )
-      req.on 'close', callback
-      req.on 'error', callback
+      if callback
+        req.on 'close', callback
+        req.on 'error', callback
       req.write reqBody, 'utf-8' if sendingData
       callback null, req if callback
     catch err
@@ -45,7 +46,7 @@ class ScopedClient
           res.on 'data', (chunk) ->
             body += chunk
 
-          res.on 'end', () ->
+          res.on 'end', ->
             callback null, res, body
 
       req.end()
