@@ -1,5 +1,6 @@
 path = require 'path'
 http = require 'http'
+https= require 'https'
 sys  = require 'sys'
 url  = require 'url'
 qs   = require 'querystring'
@@ -22,7 +23,7 @@ class ScopedClient
 
       port = @options.port ||
         ScopedClient.defaultPort[@options.protocol] || 80
-      req = http.request(
+      req = (if @options.protocol == 'https:' then https else http).request(
         port:    port
         host:    @options.hostname
         method:  method
