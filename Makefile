@@ -11,6 +11,7 @@ publish: npm-dep js
 	git push origin master
 	git push origin v$(VERSION)
 	npm publish
+	@make remove-js
 
 install: npm-dep js
 	npm install
