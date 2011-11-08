@@ -16,13 +16,13 @@ extract this out so it's a bit nicer to work with.
 I hate functions with lots of optional arguments.  Let's turn that into:
 
     var scopedClient = require('./lib')
-      , sys          = require('sys')
+      , util         = require('util')
 
     var client = scopedClient.create('http://github.com/api/v2/json')
       .header('accept', 'application/json')
       .path('user/show/technoweenie')
       .get()(function(err, resp, body) {
-        sys.puts(body)
+        util.puts(body)
       })
 
 You can scope a client to make requests with certain parameters without
@@ -31,7 +31,7 @@ affecting the main client instance:
     client.path('/api/v2/json') // reset path
     client.scope('user/show/marak', function(cli) {
       cli.get()(function(err, resp, body) {
-        sys.puts(body)
+        util.puts(body)
       })
     })
 
@@ -43,7 +43,7 @@ You can use `.post()`, `.put()`, `.del()`, and `.head()`.
 
         // posting data!
         cli.post(data)(function(err, resp, body) {
-          sys.puts(body)
+          util.puts(body)
         })
       })
 
@@ -65,7 +65,7 @@ callback.
       // do your own thing
       req.addListener('response', function (resp) {
         resp.addListener('data', function (chunk) {
-          sys.puts("CHUNK: " + chunk)
+          util.puts("CHUNK: " + chunk)
         })
       })
     })()
