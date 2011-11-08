@@ -1,7 +1,6 @@
 path = require 'path'
 http = require 'http'
 https= require 'https'
-sys  = require 'sys'
 url  = require 'url'
 qs   = require 'querystring'
 
