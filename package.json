@@ -15,4 +15,7 @@
 , "scripts":
   { "test": "make test"
   }
+, "devDependencies":
+  { "coffee-script": "1.1.2"
+  }
 }
