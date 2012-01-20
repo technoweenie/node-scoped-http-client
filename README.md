@@ -72,6 +72,13 @@ callback.
 
 [request]: http://nodejs.org/api.html#http-clientrequest-182
 
+Basic HTTP authentication is supported:
+
+    client.get(function (err, req) {
+      // we'll keep this conversation secret...
+      req.auth('technoweenie', '...')
+    })
+
 ## Development
 
 Run this in the main directory to compile coffeescript to javascript as you go:
