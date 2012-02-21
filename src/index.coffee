@@ -20,6 +20,9 @@ class ScopedClient
 
       headers['Content-Length'] = reqBody.length if sendingData
 
+      if @options.auth
+        headers['Authorization'] = 'Basic ' + new Buffer(@options.auth).toString('base64');
+
       port = @options.port ||
         ScopedClient.defaultPort[@options.protocol] || 80
       req = (if @options.protocol == 'https:' then https else http).request(
