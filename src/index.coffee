@@ -34,7 +34,6 @@ class ScopedClient
         agent:   false
       )
       if callback
-        req.on 'close', callback
         req.on 'error', callback
       req.write reqBody, 'utf-8' if sendingData
       callback null, req if callback
