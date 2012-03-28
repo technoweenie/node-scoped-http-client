@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Node.js Scoped HTTP Client by technoweenie</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/technoweenie/node-scoped-http-client">Fork On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/technoweenie/node-scoped-http-client/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/technoweenie/node-scoped-http-client/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Node.js Scoped HTTP Client</h1>
+          <p></p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/technoweenie">technoweenie</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/mattgraham">mattgraham</a></span>
+        </div>
+
+        <p><a href="http://nodejs.org/api.html#http-client-177">Node.js's HTTP client</a> is great, but a little too low level for 
+common purposes.  It's common practice for <a href="http://github.com/technoweenie/nori/blob/2b4b367350e5d2aed982e8af869401ab5612378c/lib/index.js#L72-76">some libraries</a> to
+extract this out so it's a bit nicer to work with.</p>
+
+<div class="highlight">
+<pre><span class="kd">function</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">customHeaders</span><span class="p">,</span> <span class="nx">body</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">client</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">createClient</span><span class="p">(...)</span>
+  <span class="nx">client</span><span class="p">.</span><span class="nx">request</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">headers</span><span class="p">)</span>
+  <span class="p">...</span>
+<span class="p">}</span>
+</pre>
+</div>
+
+
+<p>I hate functions with lots of optional arguments.  Let's turn that into:</p>
+
+<div class="highlight">
+<pre><span class="kd">var</span> <span class="nx">scopedClient</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'./lib'</span><span class="p">)</span>
+  <span class="p">,</span> <span class="nx">util</span>         <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'util'</span><span class="p">)</span>
+
+<span class="kd">var</span> <span class="nx">client</span> <span class="o">=</span> <span class="nx">scopedClient</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s1">'<a href="http://github.com/api/v2/json">http://github.com/api/v2/json</a>'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">header</span><span class="p">(</span><span class="s1">'accept'</span><span class="p">,</span> <span class="s1">'application/json'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">path</span><span class="p">(</span><span class="s1">'user/show/technoweenie'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">get</span><span class="p">()(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">resp</span><span class="p">,</span> <span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">util</span><span class="p">.</span><span class="nx">puts</span><span class="p">(</span><span class="nx">body</span><span class="p">)</span>
+  <span class="p">})</span>
+</pre>
+</div>
+
+
+<p>You can scope a client to make requests with certain parameters without
+affecting the main client instance:</p>
+
+<div class="highlight">
+<pre><span class="nx">client</span><span class="p">.</span><span class="nx">path</span><span class="p">(</span><span class="s1">'/api/v2/json'</span><span class="p">)</span> <span class="c1">// reset path</span>
+<span class="nx">client</span><span class="p">.</span><span class="nx">scope</span><span class="p">(</span><span class="s1">'user/show/marak'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cli</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">cli</span><span class="p">.</span><span class="nx">get</span><span class="p">()(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">resp</span><span class="p">,</span> <span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">util</span><span class="p">.</span><span class="nx">puts</span><span class="p">(</span><span class="nx">body</span><span class="p">)</span>
+  <span class="p">})</span>
+<span class="p">})</span>
+</pre>
+</div>
+
+
+<p>You can use <code>.post()</code>, <code>.put()</code>, <code>.del()</code>, and <code>.head()</code>.</p>
+
+<div class="highlight">
+<pre><span class="nx">client</span><span class="p">.</span><span class="nx">query</span><span class="p">({</span><span class="nx">login</span><span class="o">:</span><span class="s1">'technoweenie'</span><span class="p">,</span><span class="nx">token</span><span class="o">:</span><span class="s1">'...'</span><span class="p">})</span>
+  <span class="p">.</span><span class="nx">scope</span><span class="p">(</span><span class="s1">'user/show/technoweenie'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cli</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span><span class="nx">location</span><span class="o">:</span> <span class="s1">'SF'</span><span class="p">})</span>
+
+    <span class="c1">// posting data!</span>
+    <span class="nx">cli</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="nx">data</span><span class="p">)(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">resp</span><span class="p">,</span> <span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">util</span><span class="p">.</span><span class="nx">puts</span><span class="p">(</span><span class="nx">body</span><span class="p">)</span>
+    <span class="p">})</span>
+  <span class="p">})</span>
+</pre>
+</div>
+
+
+<p>Sometimes you want to stream the request body to the server.  The request 
+is a standard <a href="http://nodejs.org/api.html#http-clientrequest-182">http.clientRequest</a>.</p>
+
+<div class="highlight">
+<pre><span class="nx">client</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">req</span><span class="p">.</span><span class="nx">write</span><span class="p">(...)</span>
+  <span class="nx">req</span><span class="p">.</span><span class="nx">write</span><span class="p">(...)</span>
+<span class="p">})(</span><span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">resp</span><span class="p">,</span> <span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">...</span>
+<span class="p">})</span>
+</pre>
+</div>
+
+
+<p>And other times, you want to stream the response from the server.  Simply 
+listen for the request's response event yourself and omit the response 
+callback.</p>
+
+<div class="highlight">
+<pre><span class="nx">client</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">req</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// do your own thing</span>
+  <span class="nx">req</span><span class="p">.</span><span class="nx">addListener</span><span class="p">(</span><span class="s1">'response'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">resp</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">resp</span><span class="p">.</span><span class="nx">addListener</span><span class="p">(</span><span class="s1">'data'</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">chunk</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">util</span><span class="p">.</span><span class="nx">puts</span><span class="p">(</span><span class="s2">"CHUNK: "</span> <span class="o">+</span> <span class="nx">chunk</span><span class="p">)</span>
+    <span class="p">})</span>
+  <span class="p">})</span>
+<span class="p">})()</span>
+</pre>
+</div>
+
+
+<p>Basic HTTP authentication is supported:</p>
+
+<div class="highlight">
+<pre><span class="nx">client</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">req</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// we'll keep this conversation secret...</span>
+  <span class="nx">req</span><span class="p">.</span><span class="nx">auth</span><span class="p">(</span><span class="s1">'technoweenie'</span><span class="p">,</span> <span class="s1">'...'</span><span class="p">)</span>
+<span class="p">})</span>
+</pre>
+</div>
+
+
+<h2>Development</h2>
+
+<p>Run this in the main directory to compile coffeescript to javascript as you go:</p>
+
+<pre><code>$ coffee -wc -o lib --no-wrap src/**/*.coffee
+</code></pre>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+  </body>
+</html>
