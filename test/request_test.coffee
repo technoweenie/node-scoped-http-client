@@ -4,6 +4,7 @@ assert       = require('assert')
 called       = 0
 curr         = null
 ua           = null
+len          = null
 
 server = http.createServer (req, res) ->
   body = ''
@@ -13,6 +14,7 @@ server = http.createServer (req, res) ->
   req.on 'end', ->
     curr     = req.method
     ua       = req.headers['user-agent']
+    len      = req.headers['content-length']
     respBody = "#{curr} hello: #{body} #{ua}"
     res.writeHead 200,
       'content-type': 'text/plain'
@@ -27,10 +29,11 @@ server.listen 9999
 server.addListener 'listening', ->
   client = ScopedClient.create('http://localhost:9999')
     .headers({'user-agent':'bob'})
-  client.del() (err, resp, body) ->
+  client.del("") (err, resp, body) ->
     called++
     assert.equal 'DELETE', curr
     assert.equal 'bob',    ua
+    assert.equal '0', len
     assert.equal "DELETE hello:  bob", body
     client
       .header('user-agent', 'fred')
