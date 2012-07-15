@@ -35,15 +35,15 @@ class ScopedClient
       )
       if callback
         req.on 'error', callback
-      req.write reqBody, 'utf-8' if sendingData
+      req.write reqBody, @options.encoding if sendingData
       callback null, req if callback
     catch err
       callback err, req if callback
 
     (callback) =>
       if callback
-        req.on 'response', (res) ->
-          res.setEncoding 'utf8'
+        req.on 'response', (res) =>
+          res.setEncoding @options.encoding
           body = ''
           res.on 'data', (chunk) ->
             body += chunk
@@ -112,6 +112,9 @@ class ScopedClient
   protocol: (p) ->
     @options.protocol = p if p && p.length > 0
     @
+  encoding: (e = 'utf-8') ->
+    @options.encoding = e
+    @
 
   auth: (user, pass) ->
     if !user
@@ -147,6 +150,7 @@ class ScopedClient
       delete options.href
       delete options.search
     options.headers ||= {}
+    options.encoding ?= 'utf-8'
     options
 
 ScopedClient.methods = ["GET", "POST", "PATCH", "PUT", "DELETE", "HEAD"]
