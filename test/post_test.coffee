@@ -2,6 +2,7 @@ ScopedClient = require '../lib'
 http         = require 'http'
 assert       = require 'assert'
 called       = 0
+len          = null
 
 server = http.createServer (req, res) ->
   body = ''
@@ -9,6 +10,7 @@ server = http.createServer (req, res) ->
     body += chunk
 
   req.on 'end', ->
+    len = req.headers['content-length']
     res.writeHead 200, 'Content-Type': 'text/plain'
     res.end "#{req.method} hello: #{body}"
 
@@ -31,8 +33,11 @@ server.on 'listening', ->
         resp.on 'end', ->
           # opportunity to stream response differently
           called++
-          server.close()
+          client.post("word up") (err, resp, body) ->
+            called++
+            assert.equal '7', len
+            server.close()
     )()
 
 process.on 'exit', ->
-  assert.equal 3, called
+  assert.equal 4, called
