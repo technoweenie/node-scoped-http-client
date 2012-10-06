@@ -15,10 +15,10 @@ class ScopedClient
 
     try
       headers      = extend {}, @options.headers
-      sendingData  = method.match(/^P/) and reqBody and reqBody.length > 0
+      sendingData  = reqBody and reqBody.length > 0
       headers.Host = @options.hostname
 
-      headers['Content-Length'] = reqBody.length if sendingData
+      headers['Content-Length'] = reqBody.length if reqBody?
 
       if @options.auth
         headers['Authorization'] = 'Basic ' + new Buffer(@options.auth).toString('base64');
