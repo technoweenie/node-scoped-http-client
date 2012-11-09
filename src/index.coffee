@@ -23,13 +23,17 @@ class ScopedClient
       if @options.auth
         headers['Authorization'] = 'Basic ' + new Buffer(@options.auth).toString('base64');
 
+      if process.env.HTTP_PROXY
+        regex = /(?:https?:\/\/)?(\w+(?:\.\w+)*)(?::(\d+))?/
+        [proxy_url, proxy_host, proxy_port] = regex.exec(process.env.HTTP_PROXY)
+
       port = @options.port ||
         ScopedClient.defaultPort[@options.protocol] || 80
       req = (if @options.protocol == 'https:' then https else http).request(
-        port:    port
-        host:    @options.hostname
+        port:    proxy_port || port
+        host:    proxy_host || @options.hostname
         method:  method
-        path:    @fullPath()
+        path:    "#{@options.protocol}//#{@options.hostname}#{@fullPath()}"
         headers: headers
         agent:   false
       )
