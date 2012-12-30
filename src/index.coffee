@@ -18,7 +18,8 @@ class ScopedClient
       sendingData  = reqBody and reqBody.length > 0
       headers.Host = @options.hostname
 
-      headers['Content-Length'] = reqBody.length if reqBody?
+      if reqBody?
+        headers['Content-Length'] = Buffer.byteLength(reqBody, @options.encoding)
 
       if @options.auth
         headers['Authorization'] = 'Basic ' + new Buffer(@options.auth).toString('base64');

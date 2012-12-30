@@ -18,7 +18,7 @@ server = http.createServer (req, res) ->
     respBody = "#{curr} hello: #{body} #{ua}"
     res.writeHead 200,
       'content-type': 'text/plain'
-      'content-length': respBody.length
+      'content-length': Buffer.byteLength(respBody)
       'x-sent-authorization': req.headers.authorization
 
     res.write respBody if curr != 'HEAD'
@@ -38,11 +38,11 @@ server.addListener 'listening', ->
     client
       .header('user-agent', 'fred')
       .auth('monkey', 'town')
-      .put('yea') (err, resp, body) ->
+      .put('yéå') (err, resp, body) ->
         called++
         assert.equal 'PUT',  curr
         assert.equal 'fred', ua
-        assert.equal "PUT hello: yea fred", body
+        assert.equal "PUT hello: yéå fred", body
         assert.equal 'Basic bW9ua2V5OnRvd24=', resp.headers['x-sent-authorization']
         client
           .auth('mode:selektor')
