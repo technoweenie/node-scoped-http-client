@@ -32,7 +32,7 @@ class ScopedClient
         method:  method
         path:    @fullPath()
         headers: headers
-        agent:   false
+        agent:   @options.agent or false
       )
       if callback
         req.on 'error', callback
