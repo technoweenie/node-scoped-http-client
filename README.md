@@ -21,7 +21,7 @@ I hate functions with lots of optional arguments.  Let's turn that into:
 var scopedClient = require('./lib')
   , util         = require('util')
 
-var client = scopedClient.create('http://github.com/api/v2/json')
+var client = scopedClient.create('https://api.github.com')
   .header('accept', 'application/json')
   .path('user/show/technoweenie')
   .get()(function(err, resp, body) {
@@ -33,22 +33,22 @@ You can scope a client to make requests with certain parameters without
 affecting the main client instance:
 
 ```javascript
-client.path('/api/v2/json') // reset path
-client.scope('user/show/marak', function(cli) {
-  // cli's path is "/api/v2/json/user/show/marak"
+client.path('https://api.github.com') // reset path
+client.scope('users/technoweenie', function(cli) {
+  // cli's path is "https://api.github.com/users/technoweenie"
   cli.get()(function(err, resp, body) {
     util.puts(body)
   })
 })
 
-// client's path is back to just "/api/v2/json"
+// client's path is back to just "https://api.github.com"
 ```
 
 You can use `.post()`, `.put()`, `.del()`, and `.head()`.
 
 ```javascript
 client.query({login:'technoweenie',token:'...'})
-  .scope('user/show/technoweenie', function(cli) {
+  .scope('users/technoweenie', function(cli) {
     var data = JSON.stringify({location: 'SF'})
 
     // posting data!
