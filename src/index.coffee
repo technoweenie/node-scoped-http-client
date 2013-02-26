@@ -3,6 +3,7 @@ http = require 'http'
 https= require 'https'
 url  = require 'url'
 qs   = require 'querystring'
+tunnel = require 'tunnel'
 
 class ScopedClient
   constructor: (url, options) ->
@@ -24,15 +25,26 @@ class ScopedClient
       if @options.auth
         headers['Authorization'] = 'Basic ' + new Buffer(@options.auth).toString('base64');
 
+      if process.env.HTTP_PROXY
+        regex = /(?:https?:\/\/)?(\w+(?:\.\w+)*)(?::(\d+))?/
+        [proxy_url, proxy_host, proxy_port] = regex.exec(process.env.HTTP_PROXY)
+        if @options.protocol == 'https:'
+          tunnelingAgent = tunnel.httpsOverHttp(
+            proxy:
+              host: proxy_host
+              port: proxy_port
+          )
+
+
       port = @options.port ||
         ScopedClient.defaultPort[@options.protocol] || 80
       req = (if @options.protocol == 'https:' then https else http).request(
-        port:    port
-        host:    @options.hostname
+        port:    (proxy_port if not tunnelingAgent?) || port
+        host:    (proxy_host if not tunnelingAgent?) || @options.hostname
         method:  method
-        path:    @fullPath()
+        path:    "#{@options.protocol}//#{@options.hostname}#{@fullPath()}"
         headers: headers
-        agent:   false
+        agent:   tunnelingAgent || false
       )
       if callback
         req.on 'error', callback
