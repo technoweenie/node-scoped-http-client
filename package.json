@@ -1,6 +1,6 @@
 { "name":        "scoped-http-client"
 , "description": "http client request wrapper"
-, "version":     "0.9.7"
+, "version":     "0.9.8"
 , "author":      "technoweenie"
 , "engines" :    [ "node >= 0.8.0" ]
 , "homepage":    "https://github.com/technoweenie/node-scoped-http-client"
