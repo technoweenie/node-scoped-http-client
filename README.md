@@ -68,6 +68,7 @@ client.post(function (req) {
 })(function(err, resp, body) {
   // ...
 })
+```
 
 And other times, you want to stream the response from the server.  Simply 
 listen for the request's response event yourself and omit the response 
