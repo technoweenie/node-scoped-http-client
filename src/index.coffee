@@ -61,7 +61,7 @@ class ScopedClient
     full   = this.join p
     full  += "?#{search}" if search.length > 0
     full
-  
+
   scope: (url, options, callback) ->
     override = @buildOptions url, options
     scoped   = new ScopedClient(@options)
@@ -75,7 +75,7 @@ class ScopedClient
       callback = options
     callback scoped if callback
     scoped
-  
+
   join: (suffix) ->
     p = @options.pathname || '/'
     if suffix and suffix.length > 0
@@ -85,7 +85,7 @@ class ScopedClient
         path.join p, suffix
     else
       p
-  
+
   path: (p) ->
     @options.pathname = @join p
     @
@@ -100,16 +100,16 @@ class ScopedClient
     else
       extend @options.query, key
     @
-  
+
   host: (h) ->
     @options.hostname = h if h and h.length > 0
     @
-  
+
   port: (p) ->
     if p and (typeof(p) == 'number' || p.length > 0)
       @options.port = p
     @
-  
+
   protocol: (p) ->
     @options.protocol = p if p && p.length > 0
     @
