@@ -26,14 +26,20 @@ class ScopedClient
 
       port = @options.port ||
         ScopedClient.defaultPort[@options.protocol] || 80
-      req = (if @options.protocol == 'https:' then https else http).request(
+      
+      nonPassThroughOptions = ['headers', 'hostname', 'encoding', 'auth', 'port', 'protocol', 'agent', 'query']
+      requestOptions = {
         port:    port
         host:    @options.hostname
         method:  method
         path:    @fullPath()
         headers: headers
         agent:   @options.agent or false
-      )
+      }
+      # Extends the previous request options with all remaining options    
+      extend(requestOptions, reduce(extend({}, @options), nonPassThroughOptions))
+      
+      req = (if @options.protocol == 'https:' then https else http).request( requestOptions )
       if callback
         req.on 'error', callback
       req.write reqBody, @options.encoding if sendingData
@@ -168,5 +174,10 @@ extend = (a, b) ->
     a[prop] = b[prop]
   a
 
+# Removes keys specified in second parameter from first parameter
+reduce = (a, b) ->
+  for key in b
+    delete a[key]
+  
 exports.create = (url, options) ->
   new ScopedClient url, options
