@@ -6,7 +6,7 @@ qs   = require 'querystring'
 
 class ScopedClient
   # Those properties are in @options but they are either not passed to the request as options or some processing is made on them. They will not be added to the request's option param 
-  @nonPassThroughOptions = ['headers', 'hostname', 'encoding', 'auth', 'port', 'protocol', 'agent', 'query']
+  @nonPassThroughOptions = ['headers', 'hostname', 'encoding', 'auth', 'port', 'protocol', 'agent', 'query', 'host', 'path', 'pathname', 'slashes', 'hash']
   
   constructor: (url, options) ->
     @options = @buildOptions url, options
@@ -178,8 +178,9 @@ extend = (a, b) ->
 
 # Removes keys specified in second parameter from first parameter
 reduce = (a, b) ->
-  for key in b
-    delete a[key]
+  for propName in b
+    delete a[propName]
+  a
   
 exports.create = (url, options) ->
   new ScopedClient url, options
