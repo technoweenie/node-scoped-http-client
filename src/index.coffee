@@ -5,8 +5,12 @@ url  = require 'url'
 qs   = require 'querystring'
 
 class ScopedClient
+  # Those properties are in @options but they are either not passed to the request as options or some processing is made on them. They will not be added to the request's option param 
+  @nonPassThroughOptions = ['headers', 'hostname', 'encoding', 'auth', 'port', 'protocol', 'agent', 'query']
+  
   constructor: (url, options) ->
     @options = @buildOptions url, options
+    @passthroughOptions = reduce( extend( {}, @options ), ScopedClient.nonPassThroughOptions )
 
   request: (method, reqBody, callback) ->
     if typeof(reqBody) == 'function'
@@ -27,7 +31,6 @@ class ScopedClient
       port = @options.port ||
         ScopedClient.defaultPort[@options.protocol] || 80
       
-      nonPassThroughOptions = ['headers', 'hostname', 'encoding', 'auth', 'port', 'protocol', 'agent', 'query']
       requestOptions = {
         port:    port
         host:    @options.hostname
@@ -37,7 +40,7 @@ class ScopedClient
         agent:   @options.agent or false
       }
       # Extends the previous request options with all remaining options    
-      extend(requestOptions, reduce(extend({}, @options), nonPassThroughOptions))
+      extend requestOptions, @passthroughOptions
       
       req = (if @options.protocol == 'https:' then https else http).request( requestOptions )
       if callback
@@ -169,7 +172,6 @@ ScopedClient.prototype.del = ScopedClient.prototype['delete']
 ScopedClient.defaultPort = {'http:':80, 'https:':443, http:80, https:443}
 
 extend = (a, b) ->
-  prop = null
   Object.keys(b).forEach (prop) ->
     a[prop] = b[prop]
   a
