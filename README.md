@@ -96,6 +96,19 @@ client.get(function (err, req) {
 })
 ```
 
+Adding simple timeout support:
+
+	client = ScopedClient.create('http://10.255.255.1:9999');
+
+	client.timeout(100);
+
+	client.get()(function(err, resp, body) {
+	  if (err) {
+	    util.puts("ERROR: " + err);
+	   }
+	});
+
+
 ## Development
 
 Run this in the main directory to compile coffeescript to javascript as you go:

@@ -48,6 +48,10 @@ class ScopedClient
 
       req = (if @options.protocol == 'https:' then https else http).request(requestOptions)
 
+      if @options.timeout
+        req.setTimeout @options.timeout, () ->
+          req.abort()
+
       if callback
         req.on 'error', callback
       req.write reqBody, @options.encoding if sendingData
@@ -65,6 +69,8 @@ class ScopedClient
 
           res.on 'end', ->
             callback null, res, body
+        req.on 'error', (error) ->
+          callback error, null, null
 
       req.end()
       @
@@ -129,6 +135,10 @@ class ScopedClient
     @
   encoding: (e = 'utf-8') ->
     @options.encoding = e
+    @
+
+  timeout: (time) ->
+    @options.timeout = time
     @
 
   auth: (user, pass) ->
