@@ -1,16 +1,19 @@
-path = require 'path'
-http = require 'http'
-https= require 'https'
-url  = require 'url'
-qs   = require 'querystring'
+path  = require 'path'
+http  = require 'http'
+https = require 'https'
+url   = require 'url'
+qs    = require 'querystring'
 
 class ScopedClient
-  # Those properties are in @options but they are either not passed to the request as options or some processing is made on them. They will not be added to the request's option param
-  @nonPassThroughOptions = ['headers', 'hostname', 'encoding', 'auth', 'port', 'protocol', 'agent', 'query', 'host', 'path', 'pathname', 'slashes', 'hash']
+  # Those properties are in @options but they are either not passed to the
+  # request as options or some processing is made on them. They will not be
+  # added to the request's option param.
+  @nonPassThroughOptions = ['headers', 'hostname', 'encoding', 'auth', 'port',
+    'protocol', 'agent', 'query', 'host', 'path', 'pathname', 'slashes', 'hash']
 
   constructor: (url, options) ->
     @options = @buildOptions url, options
-    @passthroughOptions = reduce( extend( {}, @options ), ScopedClient.nonPassThroughOptions )
+    @passthroughOptions = reduce(extend({}, @options), ScopedClient.nonPassThroughOptions)
 
   request: (method, reqBody, callback) ->
     if typeof(reqBody) == 'function'
@@ -39,10 +42,12 @@ class ScopedClient
         headers: headers
         agent:   @options.agent
       }
+
       # Extends the previous request options with all remaining options
       extend requestOptions, @passthroughOptions
 
-      req = (if @options.protocol == 'https:' then https else http).request( requestOptions )
+      req = (if @options.protocol == 'https:' then https else http).request(requestOptions)
+
       if callback
         req.on 'error', callback
       req.write reqBody, @options.encoding if sendingData
