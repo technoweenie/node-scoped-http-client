@@ -102,7 +102,7 @@ class ScopedClient
       if suffix.match /^\//
         suffix
       else
-        [p, suffix].join('/')
+        [p, suffix].join '/'
     else
       p
 
