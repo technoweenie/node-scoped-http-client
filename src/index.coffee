@@ -99,7 +99,8 @@ class ScopedClient
   join: (suffix) ->
     p = @options.pathname || '/'
     if suffix and suffix.length > 0
-      url.resolve p + '/', suffix
+      if p is '/' then url.resolve p, suffix
+      else url.resolve p + '/', suffix
     else
       p
 
