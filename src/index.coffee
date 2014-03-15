@@ -1,4 +1,3 @@
-path  = require 'path'
 http  = require 'http'
 https = require 'https'
 url   = require 'url'
