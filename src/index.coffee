@@ -22,7 +22,7 @@ class ScopedClient
     try
       headers      = extend {}, @options.headers
       sendingData  = reqBody and reqBody.length > 0
-      headers.Host = @options.hostname
+      headers.Host = @options.host
 
       if reqBody?
         headers['Content-Length'] = Buffer.byteLength(reqBody, @options.encoding)
