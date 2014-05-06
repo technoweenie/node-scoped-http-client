@@ -13,7 +13,8 @@
   , "url":  "https://github.com/technoweenie/node-scoped-http-client.git"
   }
 , "scripts":
-  { "test": "make test"
+  { "test": "make test",
+    "prepublish": "coffee -o lib -c src && cat .gitignore | grep -v '^lib$' > .npmignore"
   }
 , "devDependencies":
   { "coffee-script": "1.3.3"
