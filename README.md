@@ -1,11 +1,10 @@
 # Scoped HTTP Client for Node.js
 
 [Node.js's HTTP client][client] is great, but a little too low level for 
-common purposes.  It's common practice for [some libraries][example] to
+common purposes.  It's common practice for some libraries to
 extract this out so it's a bit nicer to work with.
 
-[client]:  http://nodejs.org/api.html#http-client-177
-[example]: http://github.com/technoweenie/nori/blob/2b4b367350e5d2aed982e8af869401ab5612378c/lib/index.js#L72-76
+[client]: http://nodejs.org/api/http.html#http_http_request_options_callback
 
 ```javascript
 function(method, path, customHeaders, body, callback) {
@@ -85,7 +84,7 @@ client.get(function (err, req) {
 })()
 ```
 
-[request]: http://nodejs.org/api.html#http-clientrequest-182
+[request]: http://nodejs.org/api/http.html#http_class_http_clientrequest
 
 Basic HTTP authentication is supported:
 
@@ -114,3 +113,8 @@ Adding simple timeout support:
 Run this in the main directory to compile coffeescript to javascript as you go:
 
     $ coffee -wc -o lib --no-wrap src/**/*.coffee
+
+
+## Copyright
+
+Copyright (c) 2014 rick. See LICENSE for details.
