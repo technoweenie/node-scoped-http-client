@@ -31,9 +31,6 @@ js: coffee-dep
 remove-coffee:
 	@rm src/*.coffee
 
-remove-js:
-	@rm src/*.js
-
 npm-dep:
 	@test `which npm` || echo 'You need npm to do npm install... makes sense?'
 
