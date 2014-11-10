@@ -1,4 +1,4 @@
-ScopedClient = require('../lib')
+ScopedClient = require('../src')
 http         = require('http')
 assert       = require('assert')
 called       = 0
