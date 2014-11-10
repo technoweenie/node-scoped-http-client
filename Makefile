@@ -10,7 +10,7 @@ test: coffee-dep
 dev: coffee-dep js
 	@coffee --watch --compile --bare -output src src/
 
-publish: npm-dep git-tag build npm-publish clean
+publish: npm-dep clean git-tag build npm-publish
 
 VERSION = $(shell coffee src/npm-version.coffee)
 git-tag:
