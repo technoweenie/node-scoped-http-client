@@ -2,7 +2,7 @@ test: coffee-dep js
 	@find test -name '*_test.coffee' | xargs -n 1 -t coffee
 
 dev: js
-	@coffee -wc --bare -o lib src/
+	@coffee --watch --compile --bare -output lib src/
 
 VERSION = $(shell coffee src/npm-version.coffee)
 publish: npm-dep js
@@ -18,7 +18,7 @@ install: npm-dep js
 	@make remove-js
 
 js: coffee-dep
-	@coffee -c --bare -o lib src/
+	@coffee --compile --bare --output lib src/
 
 remove-js:
 	@rm -fr lib/
