@@ -15,9 +15,9 @@ assert.equal '3',         client.options.query['c[d]']
 
 delete client.options.query['b[]']
 delete client.options.query['c[d]']
-client.auth('user', 'monkey').protocol('https')
+client.auth('user', 'monkey').protocol('https:')
 assert.equal 'user:monkey', client.options.auth
-assert.equal 'https',       client.options.protocol
+assert.equal 'https:',      client.options.protocol
 assert.deepEqual {a:1},     client.options.query
 
 client.path('qux').auth('user:pw').port(82)
@@ -64,7 +64,7 @@ client.scope '/help', {protocol: 'http:'}, (scope) ->
   assert.equal '/help',   scope.options.pathname
 
 assert.ok called
-assert.equal 'https',   client.options.protocol
+assert.equal 'https:',  client.options.protocol
 assert.equal 'foo.com', client.options.hostname
 assert.equal '/boom',   client.options.pathname
 

@@ -14,7 +14,9 @@ server.on 'listening', ->
     headers:
       accept: 'text/plain'
 
-  client.get() (err, resp, body) ->
+  client.get((err, req) ->
+    assert.equal 'localhost:9999', req.getHeader('host')
+  ) (err, resp, body) ->
     called++
     assert.equal 200,          resp.statusCode
     assert.equal 'text/plain', resp.headers['content-type']
