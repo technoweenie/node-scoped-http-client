@@ -1,27 +1,35 @@
-test: coffee-dep js
+build: js remove-coffee
+
+clean:
+	@git clean -xxdf
+	@git reset --hard
+
+test: coffee-dep
 	@find test -name '*_test.coffee' | xargs -n 1 -t coffee
 
-dev: js
-	@coffee -wc --bare -o lib src/
+dev: coffee-dep js
+	@coffee --watch --compile --bare -output src src/
+
+publish: npm-dep clean git-tag build npm-publish
 
 VERSION = $(shell coffee src/npm-version.coffee)
-publish: npm-dep js
+git-tag:
 	git commit --allow-empty -a -m "release $(VERSION)"
 	git tag v$(VERSION)
 	git push origin master
 	git push origin v$(VERSION)
-	npm publish
-	@make remove-js
 
-install: npm-dep js
+npm-publish:
+	npm publish
+
+install: npm-dep build
 	npm install
-	@make remove-js
 
 js: coffee-dep
-	@coffee -c --bare -o lib src/
+	@coffee --compile --bare --output src src/
 
-remove-js:
-	@rm -fr lib/
+remove-coffee:
+	@rm src/*.coffee
 
 npm-dep:
 	@test `which npm` || echo 'You need npm to do npm install... makes sense?'
@@ -30,4 +38,3 @@ coffee-dep:
 	@test `which coffee` || echo 'You need to have CoffeeScript in your PATH.\nPlease install it using `brew install coffee-script` or `npm install coffee-script`.'
 
 .PHONY: all
-

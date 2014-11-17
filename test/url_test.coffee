@@ -1,4 +1,4 @@
-ScopedClient = require '../lib'
+ScopedClient = require '../src'
 assert       = require 'assert'
 called       = false
 

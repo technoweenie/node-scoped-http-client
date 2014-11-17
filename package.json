@@ -4,9 +4,9 @@
 , "author":      "technoweenie"
 , "engines" :    [ "node >= 0.8.0" ]
 , "homepage":    "https://github.com/technoweenie/node-scoped-http-client"
-, "main":        "./lib/index"
+, "main":        "./src/index"
 , "directories":
-  { "lib": "./lib"
+  { "lib": "./src"
   }
 , "repository":
   { "type": "git"
