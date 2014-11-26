@@ -30,7 +30,7 @@ server.on 'listening', ->
 
     client.post((err, req) ->
       req.on 'response', (resp) ->
-        resp.on 'end', ->
+        resp.on 'data', ->
           # opportunity to stream response differently
           called++
           client.post("word up") (err, resp, body) ->

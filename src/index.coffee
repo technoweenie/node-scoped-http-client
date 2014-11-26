@@ -13,7 +13,7 @@ class ScopedClient
 
   constructor: (url, options) ->
     @options = @buildOptions url, options
-    @passthroughOptions = reduce(extend({}, @options), ScopedClient.nonPassThroughOptions)
+    @passthroughOptions = reduce(merge({}, @options), ScopedClient.nonPassThroughOptions)
 
   request: (method, reqBody, callback) ->
     if typeof(reqBody) == 'function'
@@ -21,7 +21,7 @@ class ScopedClient
       reqBody  = null
 
     try
-      headers      = extend {}, @options.headers
+      headers      = merge {}, @options.headers
       sendingData  = reqBody and reqBody.length > 0
       headers.Host = @options.hostname
 
@@ -43,8 +43,8 @@ class ScopedClient
         agent:   @options.agent
       }
 
-      # Extends the previous request options with all remaining options
-      extend requestOptions, @passthroughOptions
+      # Merges the previous request options with all remaining options
+      merge requestOptions, @passthroughOptions
 
       req = (if @options.protocol == 'https:' then https else http).request(requestOptions)
 
@@ -118,7 +118,7 @@ class ScopedClient
       else
         delete @options.query[key]
     else
-      extend @options.query, key
+      merge @options.query, key
     @
 
   host: (h) ->
@@ -155,7 +155,7 @@ class ScopedClient
     @
 
   headers: (h) ->
-    extend @options.headers, h
+    merge @options.headers, h
     @
 
   buildOptions: ->
@@ -166,11 +166,11 @@ class ScopedClient
       if ty == 'string'
         options.url = arguments[i]
       else if ty != 'function'
-        extend options, arguments[i]
+        merge options, arguments[i]
       i += 1
 
     if options.url
-      extend options, url.parse(options.url, true)
+      merge options, url.parse(options.url, true)
       delete options.url
       delete options.href
       delete options.search
@@ -186,9 +186,9 @@ ScopedClient.prototype.del = ScopedClient.prototype['delete']
 
 ScopedClient.defaultPort = {'http:':80, 'https:':443, http:80, https:443}
 
-extend = (a, b) ->
+merge = (a, b) ->
   Object.keys(b).forEach (prop) ->
-    a[prop] = b[prop]
+    a[prop] = b[prop] unless b[prop] == null
   a
 
 # Removes keys specified in second parameter from first parameter
