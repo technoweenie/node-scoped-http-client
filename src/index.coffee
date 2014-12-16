@@ -170,16 +170,14 @@ class ScopedClient
     while arguments[i]
       ty = typeof arguments[i]
       if ty == 'string'
-        options.url = arguments[i]
+        extend options, url.parse(arguments[i], true)
+        delete options.url
+        delete options.href
+        delete options.search
       else if ty != 'function'
         extend options, arguments[i]
       i += 1
 
-    if options.url
-      extend options, url.parse(options.url, true)
-      delete options.url
-      delete options.href
-      delete options.search
     options.headers ||= {}
     options.encoding ?= 'utf-8'
     options
