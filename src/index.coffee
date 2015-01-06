@@ -25,8 +25,14 @@ class ScopedClient
       sendingData  = reqBody and reqBody.length > 0
       headers.Host = @options.hostname
 
-      if reqBody?
-        headers['Content-Length'] = Buffer.byteLength(reqBody, @options.encoding)
+      # If `callback` is `undefined` it means the caller isn't going to stream
+      # the body of the request using `callback` and we can set the
+      # content-length header ourselves.
+      #
+      # There is no way to conveniently assert in an else clause because the
+      # transfer encoding could be chunked or using a newer framing mechanism.
+      if callback is undefined
+        headers['Content-Length'] = if sendingData then Buffer.byteLength(reqBody, @options.encoding) else 0
 
       if @options.auth
         headers['Authorization'] = 'Basic ' + new Buffer(@options.auth).toString('base64');
@@ -164,16 +170,14 @@ class ScopedClient
     while arguments[i]
       ty = typeof arguments[i]
       if ty == 'string'
-        options.url = arguments[i]
+        extend options, url.parse(arguments[i], true)
+        delete options.url
+        delete options.href
+        delete options.search
       else if ty != 'function'
         extend options, arguments[i]
       i += 1
 
-    if options.url
-      extend options, url.parse(options.url, true)
-      delete options.url
-      delete options.href
-      delete options.search
     options.headers ||= {}
     options.encoding ?= 'utf-8'
     options

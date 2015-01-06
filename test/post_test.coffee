@@ -1,4 +1,5 @@
 ScopedClient = require '../src'
+Sys          = require 'sys'
 http         = require 'http'
 assert       = require 'assert'
 called       = 0
