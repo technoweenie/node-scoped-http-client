@@ -31,7 +31,7 @@ class ScopedClient
       #
       # There is no way to conveniently assert in an else clause because the
       # transfer encoding could be chunked or using a newer framing mechanism.
-      if sendingData and callback is undefined
+      if callback is undefined
         headers['Content-Length'] = if sendingData then Buffer.byteLength(reqBody, @options.encoding) else 0
 
       if @options.auth
