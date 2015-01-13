@@ -1,4 +1,3 @@
-path  = require 'path'
 http  = require 'http'
 https = require 'https'
 url   = require 'url'
@@ -23,7 +22,7 @@ class ScopedClient
     try
       headers      = extend {}, @options.headers
       sendingData  = reqBody and reqBody.length > 0
-      headers.Host = @options.hostname
+      headers.Host = @options.host
 
       # If `callback` is `undefined` it means the caller isn't going to stream
       # the body of the request using `callback` and we can set the
@@ -105,64 +104,72 @@ class ScopedClient
   join: (suffix) ->
     p = @options.pathname || '/'
     if suffix and suffix.length > 0
-      if suffix.match /^\//
-        suffix
-      else
-        path.join p, suffix
+      if p is '/' then url.resolve p, suffix
+      else url.resolve p + '/', suffix
     else
       p
 
   path: (p) ->
-    @options.pathname = @join p
-    @
+    self = clone(@)
+    self.options.pathname = self.join p
+    self
 
   query: (key, value) ->
-    @options.query ||= {}
+    self = clone(@)
+    self.options.query ||= {}
     if typeof(key) == 'string'
       if value
-        @options.query[key] = value
+        self.options.query[key] = value
       else
-        delete @options.query[key]
+        delete self.options.query[key]
     else
-      extend @options.query, key
-    @
+      extend self.options.query, key
+    self
 
   host: (h) ->
-    @options.hostname = h if h and h.length > 0
-    @
+    self = clone(@)
+    self.options.hostname = h if h and h.length > 0
+    self
 
   port: (p) ->
+    self = clone(@)
     if p and (typeof(p) == 'number' || p.length > 0)
-      @options.port = p
-    @
+      self.options.port = p
+    self
 
   protocol: (p) ->
-    @options.protocol = p if p && p.length > 0
-    @
+    self = clone(@)
+    self.options.protocol = p if p && p.length > 0
+    self
   encoding: (e = 'utf-8') ->
-    @options.encoding = e
-    @
+    self = clone(@)
+    self.options.encoding = e
+    self
 
   timeout: (time) ->
-    @options.timeout = time
-    @
+    self = clone(@)
+    self.options.timeout = time
+    self
 
   auth: (user, pass) ->
+    self = clone(@)
     if !user
-      @options.auth = null
+      self.options.auth = null
     else if !pass and user.match(/:/)
-      @options.auth = user
+      self.options.auth = user
     else
-      @options.auth = "#{user}:#{pass}"
-    @
+      self.options.auth = "#{user}:#{pass}"
+    self
 
   header: (name, value) ->
-    @options.headers[name] = value
-    @
+    self = clone(@)
+    self.options.headers[name] = value
+    self
 
   headers: (h) ->
-    extend @options.headers, h
-    @
+    self = clone(@)
+    extend self.options.headers, h
+    self
 
   buildOptions: ->
     options = {}
@@ -200,6 +207,15 @@ reduce = (a, b) ->
   for propName in b
     delete a[propName]
   a
+
+clone = (obj) ->
+  extend = (a, b) ->
+    Object.keys(b).forEach (prop) ->
+      if b[prop] instanceof Object
+        return a[prop] = clone(b[prop])
+      a[prop] = b[prop]
+    a
+  extend(new obj.constructor(), obj)
 
 exports.create = (url, options) ->
   new ScopedClient url, options
