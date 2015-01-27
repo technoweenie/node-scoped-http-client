@@ -31,6 +31,9 @@ server.on 'listening', ->
 
     client.post((err, req) ->
       req.on 'response', (resp) ->
+        resp.on 'data', (chunk) ->
+          # nop
+
         resp.on 'end', ->
           # opportunity to stream response differently
           called++
