@@ -41,6 +41,11 @@ class ScopedClient
       port = @options.port ||
         ScopedClient.defaultPort[@options.protocol] || 80
 
+      rejectUnauthorized = if @options.rejectUnauthorized == undefined
+        true
+      else
+        @options.rejectUnauthorized
+
       requestOptions = {
         port:    port
         host:    @options.hostname
@@ -48,6 +53,7 @@ class ScopedClient
         path:    @fullPath()
         headers: headers
         agent:   @options.agent
+        rejectUnauthorized: rejectUnauthorized
       }
 
       # Extends the previous request options with all remaining options
