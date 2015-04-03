@@ -9,7 +9,8 @@ class ScopedClient
   # request as options or some processing is made on them. They will not be
   # added to the request's option param.
   @nonPassThroughOptions = ['headers', 'hostname', 'encoding', 'auth', 'port',
-    'protocol', 'agent', 'query', 'host', 'path', 'pathname', 'slashes', 'hash']
+    'protocol', 'agent', 'httpAgent', 'httpsAgent', 'query', 'host', 'path',
+    'pathname', 'slashes', 'hash']
 
   constructor: (url, options) ->
     @options = @buildOptions url, options
@@ -41,19 +42,27 @@ class ScopedClient
       port = @options.port ||
         ScopedClient.defaultPort[@options.protocol] || 80
 
+      agent = @options.agent
+      if @options.protocol == 'https:'
+        requestModule = https
+        agent = @options.httpsAgent if @options.httpsAgent
+      else
+        requestModule = http
+        agent = @options.httpAgent if @options.httpAgent
+
       requestOptions = {
         port:    port
         host:    @options.hostname
         method:  method
         path:    @fullPath()
         headers: headers
-        agent:   @options.agent
+        agent:   agent
       }
 
       # Extends the previous request options with all remaining options
       extend requestOptions, @passthroughOptions
 
-      req = (if @options.protocol == 'https:' then https else http).request(requestOptions)
+      req = requestModule.request(requestOptions)
 
       if @options.timeout
         req.setTimeout @options.timeout, () ->
