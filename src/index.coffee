@@ -74,6 +74,7 @@ class ScopedClient
       callback null, req if callback
     catch err
       callback err, req if callback
+      throw err
 
     (callback) =>
       if callback
