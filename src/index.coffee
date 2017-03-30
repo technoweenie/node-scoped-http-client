@@ -21,59 +21,56 @@ class ScopedClient
       callback = reqBody
       reqBody  = null
 
-    try
-      headers      = extend {}, @options.headers
-      sendingData  = reqBody and reqBody.length > 0
-      headers.Host = @options.hostname
-      headers.Host += ":#{@options.port}" if @options.port
+    headers      = extend {}, @options.headers
+    sendingData  = reqBody and reqBody.length > 0
+    headers.Host = @options.hostname
+    headers.Host += ":#{@options.port}" if @options.port
 
-      # If `callback` is `undefined` it means the caller isn't going to stream
-      # the body of the request using `callback` and we can set the
-      # content-length header ourselves.
-      #
-      # There is no way to conveniently assert in an else clause because the
-      # transfer encoding could be chunked or using a newer framing mechanism.
-      if callback is undefined
-        headers['Content-Length'] = if sendingData then Buffer.byteLength(reqBody, @options.encoding) else 0
+    # If `callback` is `undefined` it means the caller isn't going to stream
+    # the body of the request using `callback` and we can set the
+    # content-length header ourselves.
+    #
+    # There is no way to conveniently assert in an else clause because the
+    # transfer encoding could be chunked or using a newer framing mechanism.
+    if callback is undefined
+      headers['Content-Length'] = if sendingData then Buffer.byteLength(reqBody, @options.encoding) else 0
 
-      if @options.auth
-        headers['Authorization'] = 'Basic ' + new Buffer(@options.auth).toString('base64');
+    if @options.auth
+      headers['Authorization'] = 'Basic ' + new Buffer(@options.auth).toString('base64');
 
-      port = @options.port ||
-        ScopedClient.defaultPort[@options.protocol] || 80
+    port = @options.port ||
+      ScopedClient.defaultPort[@options.protocol] || 80
 
-      agent = @options.agent
-      if @options.protocol == 'https:'
-        requestModule = https
-        agent = @options.httpsAgent if @options.httpsAgent
-      else
-        requestModule = http
-        agent = @options.httpAgent if @options.httpAgent
+    agent = @options.agent
+    if @options.protocol == 'https:'
+      requestModule = https
+      agent = @options.httpsAgent if @options.httpsAgent
+    else
+      requestModule = http
+      agent = @options.httpAgent if @options.httpAgent
 
-      requestOptions = {
-        port:    port
-        host:    @options.hostname
-        method:  method
-        path:    @fullPath()
-        headers: headers
-        agent:   agent
-      }
+    requestOptions = {
+      port:    port
+      host:    @options.hostname
+      method:  method
+      path:    @fullPath()
+      headers: headers
+      agent:   agent
+    }
 
-      # Extends the previous request options with all remaining options
-      extend requestOptions, @passthroughOptions
+    # Extends the previous request options with all remaining options
+    extend requestOptions, @passthroughOptions
 
-      req = requestModule.request(requestOptions)
+    req = requestModule.request(requestOptions)
 
-      if @options.timeout
-        req.setTimeout @options.timeout, () ->
-          req.abort()
+    if @options.timeout
+      req.setTimeout @options.timeout, () ->
+        req.abort()
 
-      if callback
-        req.on 'error', callback
-      req.write reqBody, @options.encoding if sendingData
-      callback null, req if callback
-    catch err
-      callback err, req if callback
+    if callback
+      req.on 'error', callback
+    req.write reqBody, @options.encoding if sendingData
+    callback null, req if callback
 
     (callback) =>
       if callback
